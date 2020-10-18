@@ -6,11 +6,15 @@
 
 # デモ
 
-![]()
+* [demo](https://ytyaru.github.io/Shell.Tsv2HtmlTable.20201018105859/)
 
 # 特徴
 
-* セールスポイント
+　以下のようなtableタグを作成できる。
+
+* 1行目がヘッダである
+* 1列目がヘッダである
+* 1行目と1列目がヘッダである
 
 # 開発環境
 
@@ -36,10 +40,6 @@ git clone https://github.com/ytyaru/Shell.Tsv2HtmlTable.20201018105859
 cd Shell.Tsv2HtmlTable.20201018105859/src
 ./run.sh
 ```
-
-# 注意
-
-* 注意点など
 
 # 著者
 

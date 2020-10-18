@@ -6,11 +6,15 @@ Convert TSV to HTML table tag.
 
 # DEMO
 
-![]()
+* [demo](https://ytyaru.github.io/Shell.Tsv2HtmlTable.20201018105859/)
 
 # Features
 
-* sales point
+You can create the following table tag.
+
+* The first line is the header
+* The first column is the header
+* The first row and first column are headers
 
 # Requirement
 
@@ -36,10 +40,6 @@ git clone https://github.com/ytyaru/Shell.Tsv2HtmlTable.20201018105859
 cd Shell.Tsv2HtmlTable.20201018105859/src
 ./run.sh
 ```
-
-# Note
-
-* important point
 
 # Author
 
