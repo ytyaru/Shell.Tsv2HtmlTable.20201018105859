@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>TSV to HTML table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="highlight.css">
+</head>
+<body>
+<main>
+<article>
+    <h1>TSV to HTML table examples</h1>
+    <section>
+        <h1>1st row Header</h1>
+        <pre class="hl"><span class="hl kwb">echo -e</span> <span class="hl str">&quot;Id</span><span class="hl esc">\t</span><span class="hl str">Name</span><span class="hl esc">\n</span><span class="hl str">0</span><span class="hl esc">\t</span><span class="hl str">A</span><span class="hl esc">\n</span><span class="hl str">1</span><span class="hl esc">\t</span><span class="hl str">B&quot;</span> | .<span class="hl opt">/</span>th_row.sh</pre>
+        <pre class="hl"><span class="hl kwa">&lt;table&gt;&lt;tr&gt;&lt;th&gt;</span>Id<span class="hl kwa">&lt;/th&gt;&lt;th&gt;</span>Name<span class="hl kwa">&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;</span><span class="hl num">0</span><span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span>A<span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;</span><span class="hl num">1</span><span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span>B<span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</span></pre>
+        <table><tr><th>Id</th><th>Name</th></tr><tr><td>0</td><td>A</td></tr><tr><td>1</td><td>B</td></tr></table>
+    </section>
+    <section>
+        <h1>1st column Header</h1>
+        <pre class="hl"><span class="hl kwb">echo -e</span> <span class="hl str">&quot;Id</span><span class="hl esc">\t</span><span class="hl str">0</span><span class="hl esc">\t</span><span class="hl str">1</span><span class="hl esc">\n</span><span class="hl str">Name</span><span class="hl esc">\t</span><span class="hl str">A</span><span class="hl esc">\t</span><span class="hl str">B&quot;</span> | .<span class="hl opt">/</span>th_column.sh</pre>
+        <pre class="hl">
+<span class="hl kwa">&lt;table&gt;&lt;tr&gt;&lt;th&gt;</span>Id<span class="hl kwa">&lt;/th&gt;&lt;td&gt;</span><span class="hl num">0</span><span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span><span class="hl num">1</span><span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;</span>Name<span class="hl kwa">&lt;/th&gt;&lt;td&gt;</span>A<span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span>B<span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</span></pre>
+        <table><tr><th>Id</th><td>0</td><td>1</td></tr><tr><th>Name</th><td>A</td><td>B</td></tr></table>
+    </section>
+    <section>
+        <h1>1st row &amp; column Header</h1>
+        <pre class="hl"><span class="hl kwb">echo -e</span> <span class="hl str">&quot;</span><span class="hl esc">\t</span><span class="hl str">A</span><span class="hl esc">\t</span><span class="hl str">B</span><span class="hl esc">\n</span><span class="hl str">1</span><span class="hl esc">\t</span><span class="hl str">X</span><span class="hl esc">\t</span><span class="hl str">Y</span><span class="hl esc">\n</span><span class="hl str">2</span><span class="hl esc">\t</span><span class="hl str">a</span><span class="hl esc">\t</span><span class="hl str">b&quot;</span> | .<span class="hl opt">/</span>th_row_column.sh</pre>
+        <pre class="hl"><span class="hl kwa">&lt;table&gt;&lt;tr&gt;&lt;th&gt;&lt;/th&gt;&lt;th&gt;</span>A<span class="hl kwa">&lt;/th&gt;&lt;th&gt;</span>B<span class="hl kwa">&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;</span><span class="hl num">1</span><span class="hl kwa">&lt;/th&gt;&lt;td&gt;</span>X<span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span>Y<span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th&gt;</span><span class="hl num">2</span><span class="hl kwa">&lt;/th&gt;&lt;td&gt;</span>a<span class="hl kwa">&lt;/td&gt;&lt;td&gt;</span>b<span class="hl kwa">&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</span>
+</pre>
+        <table><tr><th></th><th>A</th><th>B</th></tr><tr><th>1</th><td>X</td><td>Y</td></tr><tr><th>2</th><td>a</td><td>b</td></tr></table>
+    </section>
+</article>
+</main>
+</body>
+</html>
