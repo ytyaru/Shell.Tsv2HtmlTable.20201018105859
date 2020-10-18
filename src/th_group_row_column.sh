@@ -36,6 +36,16 @@ Run() {
 	#   [index]=colspan_value, ] 今回なら [[3]=2]. 1行目の3列目にあるthはcolspan=2である。
 	Colspan() {
 		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"')"
+		# 4行出力。3行目のみcolspan="2"。これをthのtext-contentリストとpasteして、thタグを作る
+		#
+		#
+		#colspan="2"
+		#
+		# ----------
+		# \t
+		# \t
+		# Alphabet\tcolspan="2"
+		# \t
 	}
 	Colspans() {
 		local LENGTH="$(echo -e "$TSV" | head -n 1 | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"')"
