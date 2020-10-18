@@ -4,7 +4,12 @@ set -Ceu
 # HTMLタグで囲む。
 # CreatedAt: 2020-10-18
 #---------------------------------------------------------------------------
-Enclose() { echo -n '<'"$1"'>'"$2"'</'"$1"'>'; }
+#Enclose() { echo -n '<'"$1"'>'"$2"'</'"$1"'>'; }
+Enclose() {
+	local attr="${@:3:($#-2)}"
+	[ ! "" = "$attr" ] && attr=' '"$attr"
+	echo -n '<'"${1}${attr}"'>'"$2"'</'"$1"'>';
+}
 Encloses() {
 	cat - | while read line; do {
 		Enclose "$1" "$line"

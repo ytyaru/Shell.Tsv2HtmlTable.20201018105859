@@ -1,0 +1,47 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="th_group_row_column_1.css">
+</head>
+<!--<table><tr><th>Id</th><th>Name</th></tr><tr><td>0</td><td>1</td></tr><tr><td>A</td><td>B</td></tr></table>-->
+<!--<table><tr><th>Id</th><td>0</td><td>1</td></tr><tr><th>Name</th><td>A</td><td>B</td></tr></table>-->
+<table><tr><th></th><th>A</th><th>B</th></tr><tr><th>1</th><td>X</td><td>Y</td></tr><tr><th>2</th><td>a</td><td>b</td></tr></table>
+
+<table><tr><th></th><th colspan="2" style="text-align: center">Alphabet</th></tr><tr><th></th><th>A</th><th>B</th></tr><tr><th>1</th><td>X</td><td>Y</td></tr><tr><th>2</th><td>a</td><td>b</td></tr></table>
+
+<table>
+    <tr><th></th><th colspan="2" style="text-align: center">Alphabet</th></tr>
+    <tr><th></th><th>A</th><th>B</th></tr>
+    <tr><th rowspan="2" style="text-align: center; vertical-align: middle;">Number</th><th>1</th><td>X</td><td>Y</td></tr>
+    <tr><th>2</th><td>a</td><td>b</td></tr>
+</table>
+
+<table>
+    <tr><th></th><th colspan="2" style="text-align: center">Alphabet</th></tr>
+    <tr><th></th><th>A</th><th>B</th></tr>
+    <tr><th rowspan="2">Number</th><th>1</th><td>X</td><td>Y</td></tr>
+    <tr><th>2</th><td>a</td><td>b</td></tr>
+</table>
+
+<table>
+    <tr><th></th><th></th><th colspan="2">Alphabet</th></tr>
+    <tr><th></th><th></th><th>A</th><th>B</th></tr>
+    <tr><th rowspan="2"><span>Number</span></th><th>1</th><td>X</td><td>Y</td></tr>
+    <tr><th>2</th><td>a</td><td>b</td></tr>
+</table>
+
+<table>
+    <tr><th></th><th></th><th colspan="2">Alphabet</th></tr>
+    <tr><th></th><th></th><th>A</th><th>B</th></tr>
+    <tr><th rowspan="2"><span>Number</span></th><th>1</th><td>X</td><td>Y</td></tr>
+    <tr><th>2</th><td>a</td><td>b</td></tr>
+</table>
+
+<!-- グループを開閉できるようにはできなかった -->
+<table>
+    <tr><th></th><details><summary><th colspan="2">Alphabet</th></tr></summary>
+    <tr><th></th><th>A</th><th>B</th></tr></details>
+    <tr><th>1</th><td>X</td><td>Y</td></tr>
+    <tr><th>2</th><td>a</td><td>b</td></tr>
+</table>
+
+</html>
