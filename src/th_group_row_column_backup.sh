@@ -36,18 +36,26 @@ Run() {
 	#   [index]=colspan_value, ] 今回なら [[3]=2]. 1行目の3列目にあるthはcolspan=2である。
 	TextContentLength() { echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'; }
 	ColspanLength() {
-		TextLens=("$(TextContentLength "$(echo -e "$1")")
-		Colspans=("$(TextContentLength "$(echo -e "$1")")
-		for ((i=0; i<${#TextLens}; i++)); do
-			[ 0 -eq ${TextLens[$i]} ] && continue
-			local span=1
-			for ((c=$((i + 1)); c<${#TextLens}; c++)); do
-				[ 0 -ne ${TextLens[$i]} ] && break
-				let span++
+		NotZeroIdx() { # $1: start_index
+			LNUM=${1:-1}
+			cat - | while read line; do
+				[ ! "0" = $line" ] && { echo "$LNUM"; return; }
+				let LNUM++
 			done
-			[ 1 -lt $span ] && Colspans[$i]=$span
-		done
-		echo "$(IFS=$'\n'; echo ${Colspans[*]})"
+		}
+#		local FirstNotZeroLenIdx="$(echo -e "$1" | LNUM=1; while read line; do { [ ! "0" = $line" ] && echo "$LNUM"; let LNUM++; } done)"
+		local FirstNotZeroLenIdx="$(echo -e "$1" | NotZeroIdx)"
+		local RESULT="$(echo -e "$1" | head -n $FirstNotZeroLenIdx)"
+		local INDEX_LIST="$(echo -e "$1" | tail -n +$((FirstNotZeroLenIdx + 1)))"
+
+		local Idx=1
+		Idx="$(echo -e "$INDEX_LIST" | NotZeroIdx Idx)"
+		
+#		echo -e "$INDEX_LIST" | while read line; do {
+#			[ ! "0" = $line" ] && echo "$LNUM"
+#			let LNUM++
+#		} done
+#		echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'
 	}
 	Colspan() {
 		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"')"
