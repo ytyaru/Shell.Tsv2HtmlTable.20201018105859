@@ -13,15 +13,6 @@ Run() {
 
 	# 何列目までが列ヘッダか
 	#   1列目の値の長さが0の列数が、列ヘッダ数である。
-	OutputThColumnLength() {
-		local length=0
-		TextLens=($(echo -e "$TSV" | head -n 1 | TextContentLength))
-		for ((i=0; i<${#TextLens[*]}; i++)); do
-			[ ! "0" = "${TextLens[$i]}" ] && break
-			let length++
-		done
-		echo "$length"
-	}
 	# 何行目までが行ヘッダか
 	#   どうやって判断する？
 	#   1列目の値の長さが0より大きい場合、その行より上までが行ヘッダと判断できる。
@@ -33,11 +24,6 @@ Run() {
 			let line_length++
 		} done;
 	}
-	# 行ヘッダ
-	# rowspan, colspan
-	# 大A				大B	大C
-	# 中A		中B			
-	# 小A	小B	小C	小D		小E
 	OutputThRows() {
 		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while IFS= read line; do { Enclose 'tr' "$(echo -e "$(OutputThRow "$line")" | Encloses 'th')"; } done;
 	}
@@ -69,32 +55,10 @@ Run() {
 		done
 	}
 
-	# 以下の場合、大A,中Aはrowspanを持つ。だが、中Bは持たない。
-	# 列位置単位で空白数分だけrowspanを増加する。ただし自分の左方向がすべて空白のときのみ。
-	# もし右方向に空白があるならcolspanを増加する。
-	# 大A	中A	小A
-	# 		小B
-	# 	中B	小C
-	# 大B		
-	# 大C		小D
-	#	中C	
-	OutputThColumns() {
-		local RowLen="$(OutputThRowLength)"
-		let RowLen++
-#		echo "$RowLen"
-#		echo -e "$TSV" | tail -n +$RowLen
-		echo -e "$TSV" | tail -n +$RowLen | while read line; do { paste <(th) <(td) | Encloses 'tr'; } done;
-#		echo -e "$TSV" | tail -n +2 | cut -f 1 | while read TH; do { Enclose 'th' "$TH"; echo ""; } done;
-#		paste <(th) <(td) | Encloses 'tr'
-	}
-#	OutputThColumns() { echo -e "$TSV" | tail -n +2 | cut -f 1 | while read TH; do { Enclose 'th' "$TH"; echo ""; } done; }
+	OutputThColumns() { echo -e "$TSV" | tail -n +2 | cut -f 1 | while read TH; do { Enclose 'th' "$TH"; echo ""; } done; }
 	OutputTds() { echo -e "$TSV" | tail -n +2 | cut -f 2- | while read TR; do { OutputTd "$TR"; echo ""; } done; }
 	OutputTd() { echo -e "$1" | tr '\t' '\n' | while read TD; do { Enclose 'td' "$TD"; } done; }
 	
-	OutputBodyThs() {
-		
-	}
-
 	echo "--------"
 	echo "$(OutputThRowLength)"
 	echo "--------"
@@ -108,11 +72,6 @@ Run() {
 	echo "--------"
 	echo $(OutputThRowLength)
 	echo -e "$(OutputThRows)"
-#	OutputThColumnLength
-#	OutputThColumns
-	echo -e "$(OutputThColumnLength)"
-	echo -e "$(OutputThColumns)"
-
 #	local HTML="$(Enclose 'tr' "$(OutputThRow)")"
 #	HTML+="$(echo -e "$(paste -d '' <(OutputThColumns) <(OutputTds))" | Encloses 'tr' )"
 #	echo -e "$(Enclose 'table' "$HTML")"
