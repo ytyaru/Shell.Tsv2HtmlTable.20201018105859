@@ -18,26 +18,47 @@ Run() {
 	#   1列目の値の長さが0より大きい場合、その行より上までが行ヘッダと判断できる。
 	OutputThRowLength() {
 		local line_length=0
-		echo -e "$TSV" | while read line; do {
+		echo -e "$TSV" | while IFS= read line; do {
 			let line_length++
-			local first_char_len=$(echo -e "$line" | cut -f1 | wc -l)
-			[ 0 -lt $first_char_len ] && { echo "$line_length"; return; }
+			local first_char_len=$(echo -e "$line" | cut -f1 | wc -m)
+#			echo "$(echo -e "$line" | cut -f1)"
+#			echo "$first_char_len"
+			[ 1 -lt $first_char_len ] && { echo "$line_length"; return; }
 		} done;
-		echo '0'
+#		echo '0'
 	}
+#	OutputThRows() {
+#		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
+#	}
 	OutputThRows() {
-		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
+#		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
+		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { echo -e "$(OutputThRow "$line")" | Encloses 'tr'; } done;
 	}
-	OutputThRow() { echo -e "$1" | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done; }
+	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength); }
+#	OutputThRow() {
+#		TextContents="$(echo -e "$1")"
+##		TextContentLengths="$(echo -e "$TextContents" | TextContentLength)"
+##		ColspanLengths="$(echo -e "$TextContents" | ColspanLength)"
+#		ColspanLengths="$(echo -e "$TextContents" | ColspanLength)"
+#		Colspan="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
+##		TextContents="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
+##		Colspan="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
+#		echo -e "$1" | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done;
+#	}
+#	OutputThRow() { echo -e "$1" | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done; }
 	# rowspan:
 	#   0,0,8,0: 1行目の文字列長を区切文字ごとに取得する
 	#   先頭からみて最初に0以外の値が来たら開始する
 	#   次の列が0ならcolspanを+1する. colspan=1が初期値。もし2以上ならcolspan属性を付与する。
 	#   [index]=colspan_value, ] 今回なら [[3]=2]. 1行目の3列目にあるthはcolspan=2である。
-	TextContentLength() { echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'; }
+#	TextContentLength() { echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'; }
+	TextContentLength() { cat - | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -l'; }
 	ColspanLength() {
-		TextLens=("$(TextContentLength "$(echo -e "$1")")
-		Colspans=("$(TextContentLength "$(echo -e "$1")")
+		TextLens=("$(cat - | TextContentLength)")
+		Colspans=("$(cat - | TextContentLength)")
+#		TextLens=("$(TextContentLength "$(echo -e "$1")"))
+#		Colspans=("$(TextContentLength "$(echo -e "$1")"))
+
 		for ((i=0; i<${#TextLens}; i++)); do
 			[ 0 -eq ${TextLens[$i]} ] && continue
 			local span=1
@@ -50,7 +71,7 @@ Run() {
 		echo "$(IFS=$'\n'; echo ${Colspans[*]})"
 	}
 	Colspan() {
-		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"')"
+		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'ewc -l "@"')"
 
 		# i: 0,0,8,0
 		# o: 0,0,2,0
@@ -75,6 +96,9 @@ Run() {
 	OutputThColumns() { echo -e "$TSV" | tail -n +2 | cut -f 1 | while read TH; do { Enclose 'th' "$TH"; echo ""; } done; }
 	OutputTds() { echo -e "$TSV" | tail -n +2 | cut -f 2- | while read TR; do { OutputTd "$TR"; echo ""; } done; }
 	OutputTd() { echo -e "$1" | tr '\t' '\n' | while read TD; do { Enclose 'td' "$TD"; } done; }
+
+	echo $(OutputThRowLength)
+	echo -e "$(OutputThRows)"
 #	local HTML="$(Enclose 'tr' "$(OutputThRow)")"
 #	HTML+="$(echo -e "$(paste -d '' <(OutputThColumns) <(OutputTds))" | Encloses 'tr' )"
 #	echo -e "$(Enclose 'table' "$HTML")"
