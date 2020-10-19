@@ -34,7 +34,11 @@ Run() {
 #		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
 		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { echo -e "$(OutputThRow "$line")" | Encloses 'tr'; } done;
 	}
-	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength); }
+#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength); }
+#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength | ColspanAttr); }
+#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | echo -e "$(ColspanLength)" | ColspanAttr); }
+#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | echo -e "$(ColspanLength)" | echo -e "$(ColspanAttr)"); }
+	OutputThRow() { paste <(echo -e "$1" | tr '\t' '\n') <(echo -e "$1" | echo -e "$(ColspanLength)" | echo -e "$(ColspanAttr)"); }
 #	OutputThRow() {
 #		TextContents="$(echo -e "$1")"
 ##		TextContentLengths="$(echo -e "$TextContents" | TextContentLength)"
@@ -60,16 +64,9 @@ Run() {
 	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { v=$(echo -e "$line" | wc -m); let v--; echo $v; } done; }
 	ColspanLength() {
 		INPUT="$(echo -e "$(cat -)")"
-#		TextLens=($(cat - | TextContentLength))
-#		Colspans=($(cat - | TextContentLength))
 		TextLens=($(echo -e "$INPUT" | TextContentLength))
 		Colspans=($(echo -e "$INPUT" | TextContentLength))
-#		Colspans=($(echo -e "$(cat -)" | TextContentLength))
-#		echo "${TextLens[0]}"
-#		echo "${#TextLens[*]}"
-#		echo "${#Colspans[*]}"
 		for ((i=0; i<${#TextLens[*]}; i++)); do
-#			echo "${TextLens[$i]}"
 			[ "0" = "${TextLens[$i]}" ] && continue
 			local span=1
 			for ((c=$((i + 1)); c<${#TextLens[*]}; c++)); do
@@ -79,6 +76,12 @@ Run() {
 			[ 1 -lt $span ] && Colspans[$i]=$span
 		done
 		echo -e "$(IFS=$'\n'; echo -e "${Colspans[*]}")"
+	}
+	ColspanAttr() {
+		echo -e "$(cat -)" | while read line; do
+#			[ "0" = "$line" ] && echo '' || echo 'colspan="'"$line"'"'
+			[ 1 -lt $line ] && echo 'colspan="'"$line"'"' || echo ''
+		done
 	}
 	Colspan() {
 		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'ewc -l "@"')"
@@ -111,6 +114,10 @@ Run() {
 	echo -e "\t\tAlphabet\t" | TextContentLength
 	echo "--------"
 	echo -e "\t\tAlphabet\t" | ColspanLength
+	echo "--------"
+	echo -e "\t\tAlphabet\t" | ColspanLength | ColspanAttr
+	echo "--------"
+	paste <(echo -e "\t\tAlphabet\t" | tr '\t' '\n') <(echo -e "\t\tAlphabet\t" | ColspanLength | ColspanAttr)
 	echo "--------"
 	echo $(OutputThRowLength)
 	echo -e "$(OutputThRows)"
