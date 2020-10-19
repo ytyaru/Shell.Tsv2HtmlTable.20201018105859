@@ -59,20 +59,26 @@ Run() {
 #	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { $(("$(echo -e "$line" | wc -m)" - 1)); } done; }
 	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { v=$(echo -e "$line" | wc -m); let v--; echo $v; } done; }
 	ColspanLength() {
-		TextLens=($(cat - | TextContentLength))
-		Colspans=($(cat - | TextContentLength))
+		INPUT="$(echo -e "$(cat -)")"
+#		TextLens=($(cat - | TextContentLength))
+#		Colspans=($(cat - | TextContentLength))
+		TextLens=($(echo -e "$INPUT" | TextContentLength))
+		Colspans=($(echo -e "$INPUT" | TextContentLength))
+#		Colspans=($(echo -e "$(cat -)" | TextContentLength))
 #		echo "${TextLens[0]}"
-		for ((i=0; i<${#TextLens}; i++)); do
+#		echo "${#TextLens[*]}"
+#		echo "${#Colspans[*]}"
+		for ((i=0; i<${#TextLens[*]}; i++)); do
 #			echo "${TextLens[$i]}"
 			[ "0" = "${TextLens[$i]}" ] && continue
 			local span=1
-			for ((c=$((i + 1)); c<${#TextLens}; c++)); do
-				[ ! "0" = "${TextLens[$i]}" ] && break
+			for ((c=$((i + 1)); c<${#TextLens[*]}; c++)); do
+				[ ! "0" = "${TextLens[$c]}" ] && break
 				let span++
 			done
 			[ 1 -lt $span ] && Colspans[$i]=$span
 		done
-		echo "$(IFS=$'\n'; echo ${Colspans[*]})"
+		echo -e "$(IFS=$'\n'; echo -e "${Colspans[*]}")"
 	}
 	Colspan() {
 		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'ewc -l "@"')"
