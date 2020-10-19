@@ -19,48 +19,20 @@ Run() {
 	OutputThRowLength() {
 		local line_length=0
 		echo -e "$TSV" | while IFS= read line; do {
-			let line_length++
 			local first_char_len=$(echo -e "$line" | cut -f1 | wc -m)
-#			echo "$(echo -e "$line" | cut -f1)"
-#			echo "$first_char_len"
 			[ 1 -lt $first_char_len ] && { echo "$line_length"; return; }
+			let line_length++
 		} done;
-#		echo '0'
 	}
-#	OutputThRows() {
-#		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
-#	}
 	OutputThRows() {
-#		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { Enclose 'tr' "$(OutputThRow "$line")"; } done;
-		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while read line; do { echo -e "$(OutputThRow "$line")" | Encloses 'tr'; } done;
+		echo -e "$TSV" | head -n "$(OutputThRowLength)" | while IFS= read line; do { Enclose 'tr' "$(echo -e "$(OutputThRow "$line")" | Encloses 'th')"; } done;
 	}
-#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength); }
-#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | ColspanLength | ColspanAttr); }
-#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | echo -e "$(ColspanLength)" | ColspanAttr); }
-#	OutputThRow() { paste <(echo -e "$1") <(echo -e "$1" | echo -e "$(ColspanLength)" | echo -e "$(ColspanAttr)"); }
 	OutputThRow() { paste <(echo -e "$1" | tr '\t' '\n') <(echo -e "$1" | echo -e "$(ColspanLength)" | echo -e "$(ColspanAttr)"); }
-#	OutputThRow() {
-#		TextContents="$(echo -e "$1")"
-##		TextContentLengths="$(echo -e "$TextContents" | TextContentLength)"
-##		ColspanLengths="$(echo -e "$TextContents" | ColspanLength)"
-#		ColspanLengths="$(echo -e "$TextContents" | ColspanLength)"
-#		Colspan="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
-##		TextContents="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
-##		Colspan="$(echo -e "$1" | head -n "$(OutputThRowLength)")"
-#		echo -e "$1" | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done;
-#	}
-#	OutputThRow() { echo -e "$1" | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done; }
 	# rowspan:
 	#   0,0,8,0: 1行目の文字列長を区切文字ごとに取得する
 	#   先頭からみて最初に0以外の値が来たら開始する
 	#   次の列が0ならcolspanを+1する. colspan=1が初期値。もし2以上ならcolspan属性を付与する。
 	#   [index]=colspan_value, ] 今回なら [[3]=2]. 1行目の3列目にあるthはcolspan=2である。
-#	TextContentLength() { echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'; }
-#	TextContentLength() { cat - | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -m'; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -m'; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { echo -e "$line" | wc -m; } done; }
-#	TextContentLength() { cat - | tr '\t' '\n' | while read line; do { echo -e "$line" | wc -m; } done; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { $(("$(echo -e "$line" | wc -m)" - 1)); } done; }
 	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { v=$(echo -e "$line" | wc -m); let v--; echo $v; } done; }
 	ColspanLength() {
 		INPUT="$(echo -e "$(cat -)")"
@@ -79,37 +51,16 @@ Run() {
 	}
 	ColspanAttr() {
 		echo -e "$(cat -)" | while read line; do
-#			[ "0" = "$line" ] && echo '' || echo 'colspan="'"$line"'"'
 			[ 1 -lt $line ] && echo 'colspan="'"$line"'"' || echo ''
 		done
 	}
-	Colspan() {
-		local LENGTH="$(echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'ewc -l "@"')"
 
-		# i: 0,0,8,0
-		# o: 0,0,2,0
-
-		
-
-		# 4行出力。3行目のみcolspan="2"。これをthのtext-contentリストとpasteして、thタグを作る
-		#
-		#
-		#colspan="2"
-		#
-		# ----------
-		# \t
-		# \t
-		# Alphabet\tcolspan="2"
-		# \t
-	}
-	Colspans() {
-		local LENGTH="$(echo -e "$TSV" | head -n 1 | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"')"
-	}
-#	OutputThRow() { echo -e "$TSV" | head -n 1 | tr '\t' '\n' | while read TH; do { Enclose 'th' "$TH"; } done; }
 	OutputThColumns() { echo -e "$TSV" | tail -n +2 | cut -f 1 | while read TH; do { Enclose 'th' "$TH"; echo ""; } done; }
 	OutputTds() { echo -e "$TSV" | tail -n +2 | cut -f 2- | while read TR; do { OutputTd "$TR"; echo ""; } done; }
 	OutputTd() { echo -e "$1" | tr '\t' '\n' | while read TD; do { Enclose 'td' "$TD"; } done; }
-
+	
+	echo "--------"
+	echo "$(OutputThRowLength)"
 	echo "--------"
 	echo -e "\t\tAlphabet\t" | TextContentLength
 	echo "--------"
