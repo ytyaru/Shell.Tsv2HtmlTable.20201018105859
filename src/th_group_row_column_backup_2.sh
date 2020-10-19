@@ -52,21 +52,20 @@ Run() {
 	#   次の列が0ならcolspanを+1する. colspan=1が初期値。もし2以上ならcolspan属性を付与する。
 	#   [index]=colspan_value, ] 今回なら [[3]=2]. 1行目の3列目にあるthはcolspan=2である。
 #	TextContentLength() { echo -e "$1" | tr '\t' '\n' | xargs -I@ bash -c 'wc -l "@"'; }
-#	TextContentLength() { cat - | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -m'; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -m'; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { echo -e "$line" | wc -m; } done; }
-#	TextContentLength() { cat - | tr '\t' '\n' | while read line; do { echo -e "$line" | wc -m; } done; }
-#	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { $(("$(echo -e "$line" | wc -m)" - 1)); } done; }
-	TextContentLength() { echo -e "$(cat -)" | tr '\t' '\n' | while read line; do { v=$(echo -e "$line" | wc -m); let v--; echo $v; } done; }
+	TextContentLength() { cat - | tr '\t' '\n' | xargs -I@ bash -c 'echo -e "@" | wc -l'; }
 	ColspanLength() {
-		TextLens=($(cat - | TextContentLength))
-		Colspans=($(cat - | TextContentLength))
+		TextLens=("$(cat - | TextContentLength)")
+		Colspans=("$(cat - | TextContentLength)")
+#		TextLens=("$(TextContentLength "$(echo -e "$1")"))
+#		Colspans=("$(TextContentLength "$(echo -e "$1")"))
 #		echo "${TextLens[0]}"
 		for ((i=0; i<${#TextLens}; i++)); do
 #			echo "${TextLens[$i]}"
+#			[ 0 -eq ${TextLens[$i]} ] && continue
 			[ "0" = "${TextLens[$i]}" ] && continue
 			local span=1
 			for ((c=$((i + 1)); c<${#TextLens}; c++)); do
+#				[ 0 -ne ${TextLens[$i]} ] && break
 				[ ! "0" = "${TextLens[$i]}" ] && break
 				let span++
 			done
@@ -101,11 +100,6 @@ Run() {
 	OutputTds() { echo -e "$TSV" | tail -n +2 | cut -f 2- | while read TR; do { OutputTd "$TR"; echo ""; } done; }
 	OutputTd() { echo -e "$1" | tr '\t' '\n' | while read TD; do { Enclose 'td' "$TD"; } done; }
 
-	echo "--------"
-	echo -e "\t\tAlphabet\t" | TextContentLength
-	echo "--------"
-	echo -e "\t\tAlphabet\t" | ColspanLength
-	echo "--------"
 	echo $(OutputThRowLength)
 	echo -e "$(OutputThRows)"
 #	local HTML="$(Enclose 'tr' "$(OutputThRow)")"
